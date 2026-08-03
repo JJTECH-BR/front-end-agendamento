@@ -1,0 +1,536 @@
+/* PÁGINA */
+.pagina {
+  min-height: 100vh;
+  background: #0d1b3e;
+  font-family: 'Inter', sans-serif;
+  color: #ffffff;
+}
+
+/* NAVBAR */
+.navbar {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.logoCirculo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #e63027, #00aaff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.navDireita {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navUsuario {
+  color: #a0b4cc;
+  font-size: 0.9rem;
+}
+
+.btnSair {
+  background: rgba(230, 48, 39, 0.15);
+  border: 1px solid rgba(230, 48, 39, 0.3);
+  color: #e63027;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.btnSair:hover {
+  background: rgba(230, 48, 39, 0.3);
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* BOAS VINDAS */
+.boasVindas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.boasVindas h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.boasVindas p {
+  color: #a0b4cc;
+  font-size: 0.9rem;
+}
+
+.btnNovoAgendamento {
+  background: linear-gradient(135deg, #e63027, #c0392b);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 16px rgba(230, 48, 39, 0.3);
+}
+
+.btnNovoAgendamento:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(230, 48, 39, 0.4);
+}
+
+/* RESUMO */
+.resumoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.resumoCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s;
+}
+
+.resumoCard:hover {
+  border-color: rgba(0, 170, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.resumoIcone {
+  font-size: 2rem;
+}
+
+.resumoNumero {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.resumoLabel {
+  font-size: 0.8rem;
+  color: #a0b4cc;
+}
+
+/* CONTEÚDO PRINCIPAL */
+.conteudoPrincipal {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* CARD GENÉRICO */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cardTitulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: #ffffff;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* CALENDÁRIO */
+.calendarioHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.calendarioHeader h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btnMes {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnMes:hover {
+  background: rgba(0, 170, 255, 0.2);
+}
+
+.calendarioSemana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.5rem;
+}
+
+.calendarioSemana span {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #a0b4cc;
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+
+.calendarioDias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.dia {
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.dia:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.diaVazio {
+  cursor: default;
+}
+
+.diaVazio:hover {
+  background: transparent;
+}
+
+.diaHoje {
+  background: rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  color: #00aaff;
+  font-weight: 700;
+}
+
+.diaComAgendamento {
+  font-weight: 600;
+}
+
+.ponto {
+  width: 5px;
+  height: 5px;
+  background: #e63027;
+  border-radius: 50%;
+  display: block;
+}
+
+.legendaCalendario {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.75rem;
+  color: #a0b4cc;
+}
+
+.legendaCalendario span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legendaPonto {
+  width: 8px;
+  height: 8px;
+  background: #e63027;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legendaHoje {
+  width: 8px;
+  height: 8px;
+  background: #00aaff;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* AGENDAMENTOS */
+.agendamentoLista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.agendamentoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.agendamentoItem:hover {
+  border-color: rgba(0, 170, 255, 0.3);
+  background: rgba(0, 170, 255, 0.05);
+}
+
+.historico {
+  opacity: 0.7;
+}
+
+.agendamentoIcone {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 170, 255, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.agendamentoInfo {
+  flex: 1;
+}
+
+.agendamentoInfo h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: #ffffff;
+}
+
+.agendamentoInfo p {
+  font-size: 0.8rem;
+  color: #a0b4cc;
+  margin-bottom: 0.2rem;
+}
+
+/* STATUS */
+.status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 50px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.confirmado {
+  background: rgba(0, 200, 100, 0.15);
+  color: #00c864;
+  border: 1px solid rgba(0, 200, 100, 0.2);
+}
+
+.pendente {
+  background: rgba(255, 170, 0, 0.15);
+  color: #ffaa00;
+  border: 1px solid rgba(255, 170, 0, 0.2);
+}
+
+.concluido {
+  background: rgba(160, 180, 204, 0.15);
+  color: #a0b4cc;
+  border: 1px solid rgba(160, 180, 204, 0.2);
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+  .conteudoPrincipal {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .boasVindas {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .resumoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar {
+    padding: 1rem;
+  }
+}
+
+.agendamentoAcoes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.botoesAcao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.btnEditar {
+  background: rgba(0, 170, 255, 0.1);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: #00aaff;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.btnEditar:hover {
+  background: rgba(0, 170, 255, 0.2);
+}
+
+.btnCancelar {
+  background: rgba(230, 48, 39, 0.1);
+  border: 1px solid rgba(230, 48, 39, 0.3);
+  color: #e63027;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.btnCancelar:hover {
+  background: rgba(230, 48, 39, 0.2);
+}
+
+.editandocampos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.editandoCampo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editandoCampo label {
+  font-size: 0.78rem;
+  color: #a0b4cc;
+  min-width: 55px;
+}
+
+.editandoInput {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,170,255,0.3);
+  border-radius: 8px;
+  padding: 0.35rem 0.65rem;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.editandoInput:focus {
+  border-color: #00aaff;
+}
+
+.editandocampos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.editandoCampo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editandoCampo label {
+  font-size: 0.78rem;
+  color: #a0b4cc;
+  min-width: 55px;
+}
+
+.editandoInput {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,170,255,0.3);
+  border-radius: 8px;
+  padding: 0.35rem 0.65rem;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.editandoInput:focus {
+  border-color: #00aaff;
+}

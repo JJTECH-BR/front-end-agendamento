@@ -1,0 +1,575 @@
+/* PÁGINA */
+.pagina {
+  display: flex;
+  min-height: 100vh;
+  background: #0d1b3e;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: rgba(255, 255, 255, 0.04);
+  border-right: 1px solid rgba(0, 170, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.sidebarLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.logoCirculo {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #e63027, #00aaff);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+}
+
+.sidebarNome {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.sidebarCargo {
+  display: block;
+  font-size: 0.75rem;
+  color: #00aaff;
+  font-weight: 500;
+}
+
+/* NAV SIDEBAR */
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #a0b4cc;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  width: 100%;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.menuItemAtivo {
+  background: rgba(0, 170, 255, 0.12);
+  color: #00aaff;
+  border: 1px solid rgba(0, 170, 255, 0.2);
+}
+
+/* RODAPÉ SIDEBAR */
+.sidebarRodape {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adminInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.adminAvatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #e63027, #00aaff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.adminNome {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.1rem;
+}
+
+.adminRole {
+  font-size: 0.75rem;
+  color: #a0b4cc;
+}
+
+.btnSair {
+  background: rgba(230, 48, 39, 0.1);
+  border: 1px solid rgba(230, 48, 39, 0.25);
+  color: #e63027;
+  padding: 0.6rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+}
+
+.btnSair:hover {
+  background: rgba(230, 48, 39, 0.2);
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.02em;
+}
+
+.header p {
+  color: #a0b4cc;
+  font-size: 0.9rem;
+}
+
+/* CONTEÚDO */
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* RESUMO */
+.resumoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.resumoCard {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s;
+}
+
+.resumoCard:hover {
+  border-color: rgba(0, 170, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.resumoIcone { font-size: 2rem; }
+
+.resumoNumero {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.resumoLabel {
+  font-size: 0.8rem;
+  color: #a0b4cc;
+}
+
+/* CARD */
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.cardTitulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.cardHeader .cardTitulo { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+
+/* TABELA */
+.tabelaWrapper {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  color: #a0b4cc;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tabela td {
+  padding: 1rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.tabela tr:last-child td { border-bottom: none; }
+
+.tabela tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.confirmado {
+  background: rgba(0, 200, 100, 0.12);
+  color: #00c864;
+  border: 1px solid rgba(0, 200, 100, 0.2);
+}
+
+.pendente {
+  background: rgba(255, 170, 0, 0.12);
+  color: #ffaa00;
+  border: 1px solid rgba(255, 170, 0, 0.2);
+}
+
+/* AÇÕES TABELA */
+.acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btnAcaoConfirmar {
+  background: rgba(0, 200, 100, 0.1);
+  border: 1px solid rgba(0, 200, 100, 0.2);
+  color: #00c864;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnAcaoConfirmar:hover {
+  background: rgba(0, 200, 100, 0.2);
+}
+
+.btnAcaoCancelar {
+  background: rgba(230, 48, 39, 0.1);
+  border: 1px solid rgba(230, 48, 39, 0.2);
+  color: #e63027;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnAcaoCancelar:hover {
+  background: rgba(230, 48, 39, 0.2);
+}
+
+/* SERVIÇOS */
+.btnAdicionar {
+  background: linear-gradient(135deg, #e63027, #c0392b);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 12px rgba(230, 48, 39, 0.3);
+}
+
+.btnAdicionar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(230, 48, 39, 0.4);
+}
+
+.formNovoServico {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formNovoServico h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: #ffffff;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.formGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.formGrupo label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #a0b4cc;
+}
+
+.input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus { border-color: #00aaff; }
+
+.input::placeholder { color: #a0b4cc; }
+
+.formBtns {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btnSalvar {
+  background: linear-gradient(135deg, #00aaff, #0088cc);
+  color: white;
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.btnSalvar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 170, 255, 0.4);
+}
+
+.btnCancelarForm {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #a0b4cc;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.btnCancelarForm:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.servicosLista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.servicoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.servicoItem:hover {
+  border-color: rgba(0, 170, 255, 0.25);
+  background: rgba(0, 170, 255, 0.04);
+}
+
+.servicoInativo { opacity: 0.5; }
+
+.servicoInfo h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #ffffff;
+}
+
+.servicoDetalhes {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #a0b4cc;
+}
+
+.servicoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btnToggle {
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  border: none;
+}
+
+.btnToggleAtivo {
+  background: rgba(0, 200, 100, 0.1);
+  color: #00c864;
+  border: 1px solid rgba(0, 200, 100, 0.2);
+}
+
+.btnToggleInativo {
+  background: rgba(230, 48, 39, 0.1);
+  color: #e63027;
+  border: 1px solid rgba(230, 48, 39, 0.2);
+}
+
+.btnRemover {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.35rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.btnRemover:hover { background: rgba(230, 48, 39, 0.15); }
+
+/* CLIENTES */
+.clienteNome {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.clienteAvatar {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, #e63027, #00aaff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 1rem; }
+  .resumoGrid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .resumoGrid { grid-template-columns: 1fr; }
+}
