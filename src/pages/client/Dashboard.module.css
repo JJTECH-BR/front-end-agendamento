@@ -534,3 +534,9 @@
 .editandoInput:focus {
   border-color: #00aaff;
 }
+.colunaEsquerda,
+.colunaDireita {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

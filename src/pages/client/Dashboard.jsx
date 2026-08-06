@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getSlug } from '../../services/company'
 import styles from './Dashboard.module.css'
 
 function Dashboard() {
   const navigate = useNavigate()
-  const [dataAtual, setDataAtual] = useState(new Date())
+  const [dataAtual] = useState(new Date())
   const [mesSelecionado, setMesSelecionado] = useState(new Date())
 
   // Dados mockados por enquanto (depois virão da API)
-  const usuario = { name: 'Juliana Freitas' }
+  let usuario = { name: 'Cliente' }
+  try {
+    usuario = JSON.parse(localStorage.getItem('usuario') || 'null') || usuario
+  } catch {
+    // mantém o padrão
+  }
   const [agendamentos, setAgendamentos] = useState([
     
     {
@@ -162,6 +168,7 @@ const handleSalvar = (id) => {
 
   const handleSair = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('usuario')
     navigate('/')
   }
 
@@ -181,7 +188,7 @@ const handleSalvar = (id) => {
       <nav className={styles.navbar}>
         <div className={styles.navLogo}>
           <div className={styles.logoCirculo}>JJ</div>
-          <span>Studio JJ Tech</span>
+          <span>JJTech</span>
         </div>
         <div className={styles.navDireita}>
           <span className={styles.navUsuario}>👤 {usuario.name}</span>
@@ -199,7 +206,7 @@ const handleSalvar = (id) => {
           </div>
           <button
             className={styles.btnNovoAgendamento}
-            onClick={() => navigate('/agendar')}
+            onClick={() => navigate(`/e/${getSlug()}/agendar`)}
           >
             + Novo Agendamento
           </button>

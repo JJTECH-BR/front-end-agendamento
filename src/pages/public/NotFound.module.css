@@ -1,0 +1,63 @@
+.pagina {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6b 60%, #0d1b3e 100%);
+  padding: 1.5rem;
+  font-family: 'Lato', sans-serif;
+}
+
+.card {
+  text-align: center;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  backdrop-filter: blur(12px);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #00aaff;
+  margin-bottom: 0.6rem;
+}
+
+.titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+}
+
+.descricao {
+  font-size: 0.95rem;
+  color: #a0b4cc;
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+}
+
+.botao {
+  background: linear-gradient(135deg, #e63027, #c0392b);
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem 1.75rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Lato', sans-serif;
+  box-shadow: 0 4px 16px rgba(230, 48, 39, 0.3);
+}
+
+.botao:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(230, 48, 39, 0.4);
+}

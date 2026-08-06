@@ -573,3 +573,13 @@
   .progressoLabel { display: none; }
   .progressoLinha { width: 30px; }
 }
+.colunaPrincipal {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+}

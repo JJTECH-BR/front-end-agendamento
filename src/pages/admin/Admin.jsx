@@ -34,7 +34,6 @@ function Admin() {
 
   const [novoServico, setNovoServico] = useState({ nome: '', duracao: '', preco: '' })
   const [mostrarFormServico, setMostrarFormServico] = useState(false)
-  const [editandoServico, setEditandoServico] = useState(null)
 
   const formatarValor = (valor) =>
     valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -90,7 +89,7 @@ function Admin() {
         <div className={styles.sidebarLogo}>
           <div className={styles.logoCirculo}>JJ</div>
           <div>
-            <span className={styles.sidebarNome}>Studio JJ Tech</span>
+            <span className={styles.sidebarNome}>JJTech</span>
             <span className={styles.sidebarCargo}>Painel Admin</span>
           </div>
         </div>

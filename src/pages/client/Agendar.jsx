@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getSlug } from '../../services/company'
 import styles from './Agendar.module.css'
 
 function Agendar() {
@@ -74,10 +75,10 @@ function Agendar() {
   const handleConfirmar = () => {
     const token = localStorage.getItem('token')
     if (!token) {
-      navigate('/login')
+      navigate(`/e/${getSlug()}/login`)
     } else {
       alert('Agendamento confirmado com sucesso!')
-      navigate('/dashboard')
+      navigate(`/e/${getSlug()}/dashboard`)
     }
   }
 
@@ -96,7 +97,7 @@ function Agendar() {
       <nav className={styles.navbar}>
         <div className={styles.navLogo} onClick={() => navigate('/')}>
           <div className={styles.logoCirculo}>JJ</div>
-          <span>Studio JJ Tech</span>
+          <span>JJTech</span>
         </div>
         <button className={styles.btnVoltar} onClick={() => navigate('/')}>
           ← Voltar
