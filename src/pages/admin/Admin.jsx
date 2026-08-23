@@ -1,13 +1,29 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styles from './Admin.module.css'
 
 function Admin() {
   const navigate = useNavigate()
+  const { slug } = useParams()
 
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{"name": "Admin"}')
 
   const [abaAtiva, setAbaAtiva] = useState('dashboard')
+  const [copiado, setCopiado] = useState(false)
+
+  // Monta o link dinâmico da empresa logada
+  const linkAgendamento = `${window.location.origin}/e/${slug}`
+
+  const handleCopiarLink = async () => {
+    try {
+      await navigator.clipboard.writeText(linkAgendamento)
+      setCopiado(true)
+      setTimeout(() => setCopiado(false), 3000)
+    } catch (err) {
+      console.error('Erro ao copiar link:', err)
+    }
+  }
+
   const [servicos, setServicos] = useState([
     { id: 1, nome: 'Corte de Cabelo', duracao: '60 min', preco: 80.00, ativo: true },
     { id: 2, nome: 'Coloração', duracao: '120 min', preco: 150.00, ativo: true },
@@ -140,6 +156,72 @@ function Admin() {
         {/* ABA DASHBOARD */}
         {abaAtiva === 'dashboard' && (
           <div className={styles.conteudo}>
+
+            {/* CARD DE COMPARTILHAMENTO DO LINK */}
+            <div className={styles.card} style={{ marginBottom: '1.5rem', background: '#1e293b', color: '#fff', border: '1px solid #334155' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    🔗 Link da Sua Empresa
+                  </h3>
+                  <p style={{ margin: '0.3rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
+                    Compartilhe este endereço com seus clientes para receber agendamentos:
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <input
+                    type="text"
+                    value={linkAgendamento}
+                    readOnly
+                    style={{
+                      background: '#0f172a',
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      color: '#38bdf8',
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.875rem',
+                      minWidth: '260px'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCopiarLink}
+                    style={{
+                      background: copiado ? '#22c55e' : '#3b82f6',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '0.55rem 1rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      transition: '0.2s'
+                    }}
+                  >
+                    {copiado ? '✅ Copiado!' : '📋 Copiar Link'}
+                  </button>
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Olá! Agende seu horário no nosso site: ${linkAgendamento}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      background: '#25D366',
+                      color: '#fff',
+                      textDecoration: 'none',
+                      padding: '0.55rem 1rem',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem'
+                    }}
+                  >
+                    💬 WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+
             <div className={styles.resumoGrid}>
               <div className={styles.resumoCard}>
                 <div className={styles.resumoIcone}>📅</div>
@@ -279,7 +361,7 @@ function Admin() {
                         type="text"
                         placeholder="Ex: Hidratação"
                         value={novoServico.nome}
-                        onChange={(e) => setNovoServico({...novoServico, nome: e.target.value})}
+                        onChange={(e) => setNovoServico({ ...novoServico, nome: e.target.value })}
                         className={styles.input}
                       />
                     </div>
@@ -289,7 +371,7 @@ function Admin() {
                         type="text"
                         placeholder="Ex: 60 min"
                         value={novoServico.duracao}
-                        onChange={(e) => setNovoServico({...novoServico, duracao: e.target.value})}
+                        onChange={(e) => setNovoServico({ ...novoServico, duracao: e.target.value })}
                         className={styles.input}
                       />
                     </div>
@@ -299,7 +381,7 @@ function Admin() {
                         type="number"
                         placeholder="Ex: 80"
                         value={novoServico.preco}
-                        onChange={(e) => setNovoServico({...novoServico, preco: e.target.value})}
+                        onChange={(e) => setNovoServico({ ...novoServico, preco: e.target.value })}
                         className={styles.input}
                       />
                     </div>
