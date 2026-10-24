@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom'
-import { getSlug } from '../../services/company'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getSlug, urlDaEmpresa } from '../../services/company'
 import styles from './auth.module.css'
 
 function AuthLayout({ titulo, subtitulo, eyebrow, children }) {
   const navigate = useNavigate()
-  const slug = getSlug()
+  const { slug: slugDaUrl } = useParams()
+  const slug = slugDaUrl || getSlug()
 
   return (
     <div className={styles.pagina}>
@@ -17,14 +18,14 @@ function AuthLayout({ titulo, subtitulo, eyebrow, children }) {
           <button
             type="button"
             className={styles.btnCliente}
-            onClick={() => navigate(`/e/${slug}/login`)}
+            onClick={() => navigate(urlDaEmpresa('login', slug))}
           >
             Cliente
           </button>
           <button
             type="button"
             className={styles.btnAdmin}
-            onClick={() => navigate(`/e/${slug}/admin/login`)}
+            onClick={() => navigate(urlDaEmpresa('admin/login', slug))}
           >
             Admin
           </button>
@@ -37,7 +38,6 @@ function AuthLayout({ titulo, subtitulo, eyebrow, children }) {
           {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}
           <h1 className={styles.titulo}>{titulo}</h1>
           <p className={styles.subtitulo}>{subtitulo}</p>
-          <span className={styles.empresaBadge}>Empresa: {slug}</span>
         </div>
         {children}
       </div>

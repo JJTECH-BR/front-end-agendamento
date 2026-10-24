@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import api from '../../services/api'
 import AuthLayout from './AuthLayout'
-import { getSlug, setSlug } from '../../services/company'
+import { getSlug, setSlug, urlDaEmpresa } from '../../services/company'
 import styles from './auth.module.css'
 
 function CadastroAdmin() {
@@ -10,10 +10,7 @@ function CadastroAdmin() {
   const slug = slugDaUrl || getSlug()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    setSlug(slug)
-  }, [slug])
-
+  const [nomeEmpresa, setNomeEmpresa] = useState('')
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -22,9 +19,21 @@ function CadastroAdmin() {
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState('')
   const [sucesso, setSucesso] = useState(false)
+  const [linkPublico, setLinkPublico] = useState('')
+  const [slugEmpresa, setSlugEmpresa] = useState('')
+  const [linkCopiado, setLinkCopiado] = useState(false)
+  const [linkStatus, setLinkStatus] = useState('')
 
-  // Chave secreta para proteger o cadastro de admin
-  const CHAVE_ADMIN = 'jjtech@admin2026'
+  useEffect(() => {
+    setSlug(slug)
+  }, [slug])
+
+  const gerarSlugEmpresa = () => nomeEmpresa
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
 
   const handleCadastro = async (evento) => {
     evento.preventDefault()
@@ -34,18 +43,13 @@ function CadastroAdmin() {
       return
     }
 
-    if (chaveSecreta !== CHAVE_ADMIN) {
-      setErro('Chave secreta incorreta')
-      return
-    }
-
     if (senha !== confirmarSenha) {
       setErro('As senhas não coincidem')
       return
     }
 
-    if (senha.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres')
+    if (senha.length < 8) {
+      setErro('A senha deve ter pelo menos 8 caracteres')
       return
     }
 
@@ -53,20 +57,36 @@ function CadastroAdmin() {
       setCarregando(true)
       setErro('')
 
-      await api.post('/users', {
-        name: nome,
-        email: email,
+      const resposta = await api.post('/companies', {
+        companyName: nomeEmpresa,
+        userName: nome,
+        email,
         password: senha,
-        confirmPassword: confirmarSenha,
-        companyId: slug,
-        role: 'ADMIN',
-        adminKey: chaveSecreta
+        adminKey: chaveSecreta,
       })
 
+      const novoSlug = resposta.data?.slug
+      if (!novoSlug) {
+        throw new Error('A empresa foi criada, mas o servidor não retornou o link público.')
+      }
+
+      setSlug(novoSlug)
+      setSlugEmpresa(novoSlug)
+      setLinkPublico(`${window.location.origin}${urlDaEmpresa('', novoSlug)}`)
       setSucesso(true)
 
     } catch (error) {
-      setErro(error.response?.data?.error || error.response?.data?.message || 'Erro ao criar admin. Tente novamente.')
+      const mensagemApi = error.response?.data?.error || error.response?.data?.message
+      const emailJaCadastrado = /e-mail já está em uso|usuário já existe/i.test(mensagemApi || '')
+
+      if (!error.response || emailJaCadastrado) {
+        setSlugEmpresa(gerarSlugEmpresa())
+        setErro(emailJaCadastrado
+          ? 'Este e-mail já está cadastrado. Se o envio anterior foi interrompido, tente entrar na empresa antes de cadastrar novamente.'
+          : 'A conexão foi interrompida antes da confirmação. A empresa pode ter sido criada; tente entrar antes de reenviar o cadastro.')
+      } else {
+        setErro(mensagemApi || error.message || 'Erro ao criar admin. Tente novamente.')
+      }
     } finally {
       setCarregando(false)
     }
@@ -80,10 +100,33 @@ function CadastroAdmin() {
             <span className={styles.sucessoIcone}>✅</span>
             <h2>Admin criado com sucesso!</h2>
             <p>Agora você pode fazer login com as credenciais cadastradas.</p>
+            <div className={styles.linkPublico}>
+              <label htmlFor="link-publico">Link público da empresa</label>
+              <div>
+                <input id="link-publico" value={linkPublico} readOnly />
+                <button
+                  type="button"
+                  className={styles.linkBtn}
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(linkPublico)
+                      setLinkCopiado(true)
+                      setLinkStatus('Link copiado para a área de transferência.')
+                    } catch {
+                      setLinkStatus('Não foi possível copiar o link neste navegador.')
+                    }
+                  }}
+                >
+                  {linkCopiado ? 'Copiado' : 'Copiar'}
+                </button>
+              </div>
+              {linkStatus && <span role="status">{linkStatus}</span>}
+              <a href={linkPublico}>{nomeEmpresa}</a>
+            </div>
             <button
               type="button"
               className={styles.botao}
-              onClick={() => navigate(`/e/${slug}/admin/login`)}
+              onClick={() => navigate(urlDaEmpresa('admin/login', slugEmpresa))}
             >
               Ir para o Login
             </button>
@@ -103,6 +146,19 @@ function CadastroAdmin() {
         </div>
 
         <form className={styles.formulario} onSubmit={handleCadastro}>
+          <div className={styles.campo}>
+            <label>Nome da Empresa</label>
+            <div className={styles.inputWrapper}>
+              <span>🏢</span>
+              <input
+                type="text"
+                placeholder="Nome da empresa"
+                value={nomeEmpresa}
+                onChange={(e) => setNomeEmpresa(e.target.value)}
+              />
+            </div>
+          </div>
+
           <div className={styles.campo}>
             <label>Nome Completo</label>
             <div className={styles.inputWrapper}>
@@ -135,7 +191,7 @@ function CadastroAdmin() {
               <span>🔒</span>
               <input
                 type="password"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
               />
@@ -172,6 +228,15 @@ function CadastroAdmin() {
           </div>
 
           {erro && <p className={styles.erro}>{erro}</p>}
+          {erro && slugEmpresa && (
+            <button
+              type="button"
+              className={styles.linkBtn}
+              onClick={() => navigate(urlDaEmpresa('admin/login', slugEmpresa))}
+            >
+              Ir para o login da empresa
+            </button>
+          )}
 
           <button
             type="submit"
@@ -187,7 +252,7 @@ function CadastroAdmin() {
           <button
             type="button"
             className={styles.linkBtn}
-            onClick={() => navigate(`/e/${slug}/admin/login`)}
+            onClick={() => navigate(urlDaEmpresa('admin/login', slug))}
           >
             Fazer login
           </button>

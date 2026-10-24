@@ -422,6 +422,60 @@
   font-size: 0.9rem;
 }
 
+.linkPublico {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(0, 170, 255, 0.07);
+  text-align: left;
+}
+
+.linkPublico label,
+.linkPublico > span {
+  color: #a0b4cc;
+  font-size: 0.8rem;
+}
+
+.linkPublico > div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.linkPublico input {
+  min-width: 0;
+  flex: 1;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #bdeaff;
+  background: rgba(5, 15, 37, 0.7);
+}
+
+.linkPublico > a {
+  width: fit-content;
+  color: #00aaff;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.linkPublico > a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.linkPublico .linkBtn {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(0, 170, 255, 0.12);
+}
+
 /* RESPONSIVO */
 @media (max-width: 480px) {
   .pagina {

@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import api from '../../services/api'
 import AuthLayout from './AuthLayout'
-import { getSlug, setSlug } from '../../services/company'
+import { getSlug, setSlug, urlDaEmpresa } from '../../services/company'
 import styles from './auth.module.css'
 
 function Login() {
   const { slug: slugDaUrl } = useParams()
   const slug = slugDaUrl || getSlug()
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     setSlug(slug)
@@ -48,12 +49,12 @@ function Login() {
       localStorage.setItem('usuario', JSON.stringify(usuario))
 
       if (usuario.role === 'ADMIN') {
-        navigate(`/e/${slug}/admin`)
+        navigate(urlDaEmpresa('admin', slug))
       } else {
-        navigate(`/e/${slug}/dashboard`)
+        navigate(location.state?.redirectTo || urlDaEmpresa('dashboard', slug))
       }
     } catch (error) {
-      setErro(error.response?.data?.message || 'Email ou senha incorretos')
+      setErro(error.response?.data?.error || 'Email ou senha incorretos')
     } finally {
       setCarregando(false)
     }
@@ -72,8 +73,8 @@ function Login() {
       return
     }
 
-    if (senha.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres')
+    if (senha.length < 8) {
+      setErro('A senha deve ter pelo menos 8 caracteres')
       return
     }
 
@@ -149,7 +150,7 @@ function Login() {
                 <span>🔒</span>
                 <input
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                 />
@@ -197,7 +198,7 @@ function Login() {
                 <span>🔒</span>
                 <input
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                 />

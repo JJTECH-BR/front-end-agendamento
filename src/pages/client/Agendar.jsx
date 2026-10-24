@@ -1,10 +1,13 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getSlug } from '../../services/company'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import api from '../../services/api'
+import { getSlug, urlDaEmpresa } from '../../services/company'
 import styles from './Agendar.module.css'
 
 function Agendar() {
   const navigate = useNavigate()
+  const { slug: slugDaUrl } = useParams()
+  const slug = slugDaUrl || getSlug()
 
   const [etapa, setEtapa] = useState(1)
   const [profissionalSelecionado, setProfissionalSelecionado] = useState(null)
@@ -12,33 +15,54 @@ function Agendar() {
   const [dataSelecionada, setDataSelecionada] = useState(null)
   const [horarioSelecionado, setHorarioSelecionado] = useState(null)
   const [mesSelecionado, setMesSelecionado] = useState(new Date())
+  const [profissionais, setProfissionais] = useState([])
+  const [servicos, setServicos] = useState([])
+  const [horarioEmpresa, setHorarioEmpresa] = useState({ abertura: '09:00', fechamento: '17:00', datasFechadas: [] })
+  const [carregandoCatalogo, setCarregandoCatalogo] = useState(true)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
 
-  const profissionais = [
-    { id: 1, nome: 'Ana Paula', especialidade: 'Cabelos', inicial: 'A', servicos: [1, 2, 5] },
-    { id: 2, nome: 'Carla Silva', especialidade: 'Unhas & Estética', inicial: 'C', servicos: [3, 4, 6] },
-    { id: 3, nome: 'Juliana Freitas', especialidade: 'Sobrancelha & Depilação', inicial: 'J', servicos: [6, 4] },
-  ]
+  const carregarCatalogo = useCallback(async () => {
+    setCarregandoCatalogo(true)
+    setErro('')
+    try {
+      const { data } = await api.get(`/public/companies/${encodeURIComponent(slug)}`)
+      setProfissionais((data.users || data.professionals || []).map((professional) => ({
+        id: professional.id,
+        nome: professional.name,
+        especialidade: professional.specialty || 'Profissional',
+        inicial: professional.name.charAt(0).toUpperCase(),
+        schedules: professional.schedules || [],
+      })))
+      setServicos(data.services.map((service) => ({
+        id: service.id,
+        nome: service.name,
+        duracao: `${service.duration} min`,
+        minutos: service.duration,
+        preco: Number(service.price),
+        professionalId: service.professionalId,
+      })))
+      setHorarioEmpresa({
+        abertura: data.openingTime || '09:00',
+        fechamento: data.closingTime || '17:00',
+        datasFechadas: data.closedDates || [],
+      })
+    } catch (requestError) {
+      setErro(requestError.response?.data?.error || 'Não foi possível carregar os serviços desta empresa.')
+    } finally {
+      setCarregandoCatalogo(false)
+    }
+  }, [slug])
 
-  const servicos = [
-    { id: 1, nome: 'Corte de Cabelo', duracao: '60 min', preco: 80.00 },
-    { id: 2, nome: 'Coloração', duracao: '120 min', preco: 150.00 },
-    { id: 3, nome: 'Manicure', duracao: '45 min', preco: 45.00 },
-    { id: 4, nome: 'Pedicure', duracao: '50 min', preco: 50.00 },
-    { id: 5, nome: 'Escova', duracao: '60 min', preco: 60.00 },
-    { id: 6, nome: 'Sobrancelha', duracao: '30 min', preco: 35.00 },
-  ]
-
-  const horarios = [
-    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-    '11:00', '11:30', '13:00', '13:30', '14:00', '14:30',
-    '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
-  ]
+  useEffect(() => {
+    carregarCatalogo()
+  }, [carregarCatalogo])
 
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
   const semana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
 
   const servicosDisponiveis = profissionalSelecionado
-    ? servicos.filter(s => profissionalSelecionado.servicos.includes(s.id))
+    ? servicos.filter((service) => !service.professionalId || service.professionalId === profissionalSelecionado.id)
     : []
 
   const gerarDiasDoMes = (data) => {
@@ -53,6 +77,54 @@ function Agendar() {
   }
 
   const hoje = new Date()
+  const profissionalTemHorarios = Boolean(profissionalSelecionado?.schedules.length)
+  const diaDaSemanaSelecionado = dataSelecionada
+    ? new Date(mesSelecionado.getFullYear(), mesSelecionado.getMonth(), dataSelecionada).getDay()
+    : null
+  const horarioDoDia = diaDaSemanaSelecionado === null
+    ? null
+    : profissionalSelecionado?.schedules.find((schedule) => schedule.dayOfWeek === diaDaSemanaSelecionado)
+  const diaDisponivel = !profissionalTemHorarios || Boolean(horarioDoDia?.available)
+  const [aberturaHora, aberturaMinuto] = horarioEmpresa.abertura.split(':').map(Number)
+  const [fechamentoHora, fechamentoMinuto] = horarioEmpresa.fechamento.split(':').map(Number)
+  const inicioEmpresa = aberturaHora * 60 + aberturaMinuto
+  const fimEmpresa = fechamentoHora * 60 + fechamentoMinuto
+  const inicioProfissional = horarioDoDia
+    ? horarioDoDia.startTime.split(':').map(Number).reduce((hours, minutes) => hours * 60 + minutes)
+    : inicioEmpresa
+  const fimProfissional = horarioDoDia
+    ? horarioDoDia.endTime.split(':').map(Number).reduce((hours, minutes) => hours * 60 + minutes)
+    : fimEmpresa
+  const inicioExpediente = Math.max(inicioEmpresa, inicioProfissional)
+  const fimExpediente = Math.min(fimEmpresa, fimProfissional)
+  const duracaoSelecionada = servicoSelecionado?.minutos || 30
+  const horarios = []
+  for (let minutos = inicioExpediente; diaDisponivel && minutos + duracaoSelecionada <= fimExpediente; minutos += 30) {
+    const horario = `${String(Math.floor(minutos / 60)).padStart(2, '0')}:${String(minutos % 60).padStart(2, '0')}`
+    const dataHora = new Date(
+      mesSelecionado.getFullYear(),
+      mesSelecionado.getMonth(),
+      dataSelecionada || 1,
+      Math.floor(minutos / 60),
+      minutos % 60,
+    )
+    if (!dataSelecionada || dataHora > new Date()) horarios.push(horario)
+  }
+
+  const chaveData = (ano, mes, dia) =>
+    `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+
+  const isDiaFechado = (dia) => Boolean(dia && horarioEmpresa.datasFechadas.includes(
+    chaveData(mesSelecionado.getFullYear(), mesSelecionado.getMonth(), dia),
+  ))
+
+  const isDiaSemExpediente = (dia) => {
+    if (!dia || !profissionalTemHorarios) return false
+    const dayOfWeek = new Date(mesSelecionado.getFullYear(), mesSelecionado.getMonth(), dia).getDay()
+    return !profissionalSelecionado.schedules.some(
+      (schedule) => schedule.dayOfWeek === dayOfWeek && schedule.available,
+    )
+  }
 
   const isDiaPassado = (dia) => {
     if (!dia) return false
@@ -60,7 +132,7 @@ function Agendar() {
     data.setHours(0,0,0,0)
     const hojeZero = new Date()
     hojeZero.setHours(0,0,0,0)
-    return data < hojeZero
+    return data < hojeZero || isDiaFechado(dia) || isDiaSemExpediente(dia)
   }
 
   const formatarData = (dia) => {
@@ -72,13 +144,33 @@ function Agendar() {
   const formatarValor = (valor) =>
     valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
-  const handleConfirmar = () => {
+  const handleConfirmar = async () => {
     const token = localStorage.getItem('token')
     if (!token) {
-      navigate(`/e/${getSlug()}/login`)
-    } else {
-      alert('Agendamento confirmado com sucesso!')
-      navigate(`/e/${getSlug()}/dashboard`)
+      navigate(urlDaEmpresa('login', slug))
+      return
+    }
+
+    setSalvando(true)
+    setErro('')
+    try {
+      const dataHora = new Date(
+        mesSelecionado.getFullYear(),
+        mesSelecionado.getMonth(),
+        dataSelecionada,
+        Number(horarioSelecionado.slice(0, 2)),
+        Number(horarioSelecionado.slice(3, 5)),
+      )
+      await api.post('/appointments', {
+        serviceId: servicoSelecionado.id,
+        professionalId: profissionalSelecionado.id,
+        date: dataHora.toISOString(),
+      })
+      navigate(urlDaEmpresa('dashboard', slug))
+    } catch (requestError) {
+      setErro(requestError.response?.data?.error || 'Não foi possível salvar o agendamento.')
+    } finally {
+      setSalvando(false)
     }
   }
 
@@ -95,11 +187,11 @@ function Agendar() {
 
       {/* NAVBAR */}
       <nav className={styles.navbar}>
-        <div className={styles.navLogo} onClick={() => navigate('/')}>
+        <div className={styles.navLogo} onClick={() => navigate(urlDaEmpresa('', slug))}>
           <div className={styles.logoCirculo}>JJ</div>
           <span>JJTech</span>
         </div>
-        <button className={styles.btnVoltar} onClick={() => navigate('/')}>
+        <button className={styles.btnVoltar} onClick={() => navigate(urlDaEmpresa('', slug))}>
           ← Voltar
         </button>
       </nav>
@@ -136,16 +228,29 @@ function Agendar() {
 
           {/* COLUNA PRINCIPAL */}
           <div className={styles.colunaPrincipal}>
+            {erro && <p className={styles.erro} role="alert">{erro}</p>}
 
             {/* ETAPA 1 — PROFISSIONAL */}
             {etapa === 1 && (
               <div className={styles.card}>
                 <h2 className={styles.cardTitulo}>Escolha o Profissional</h2>
                 <p className={styles.cardDesc}>Selecione com quem deseja realizar o atendimento</p>
-                <div className={styles.profissionaisGrid}>
+                {carregandoCatalogo ? (
+                  <p role="status">Carregando profissionais e serviços...</p>
+                ) : profissionais.length === 0 ? (
+                  <p>Nenhum profissional ativo está cadastrado nesta empresa.</p>
+                ) : <div className={styles.profissionaisGrid}>
                   {profissionais.map(prof => (
                     <div
                       key={prof.id}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          setProfissionalSelecionado(prof)
+                          setServicoSelecionado(null)
+                        }
+                      }}
                       className={`${styles.profissionalCard} ${
                         profissionalSelecionado?.id === prof.id ? styles.selecionado : ''
                       }`}
@@ -162,7 +267,7 @@ function Agendar() {
                       )}
                     </div>
                   ))}
-                </div>
+                </div>}
               </div>
             )}
 
@@ -171,7 +276,9 @@ function Agendar() {
               <div className={styles.card}>
                 <h2 className={styles.cardTitulo}>Escolha o Serviço</h2>
                 <p className={styles.cardDesc}>Serviços disponíveis com {profissionalSelecionado?.nome}</p>
-                <div className={styles.servicosLista}>
+                {servicosDisponiveis.length === 0 ? (
+                  <p>Não há serviços ativos para este profissional.</p>
+                ) : <div className={styles.servicosLista}>
                   {servicosDisponiveis.map(servico => (
                     <div
                       key={servico.id}
@@ -193,6 +300,7 @@ function Agendar() {
                     </div>
                   ))}
                 </div>
+                }
               </div>
             )}
 
@@ -204,12 +312,20 @@ function Agendar() {
                 <div className={styles.calendarioHeader}>
                   <button
                     className={styles.btnMes}
-                    onClick={() => setMesSelecionado(new Date(mesSelecionado.getFullYear(), mesSelecionado.getMonth() - 1))}
+                    onClick={() => {
+                      setMesSelecionado(new Date(mesSelecionado.getFullYear(), mesSelecionado.getMonth() - 1))
+                      setDataSelecionada(null)
+                      setHorarioSelecionado(null)
+                    }}
                   >‹</button>
                   <h3>{meses[mesSelecionado.getMonth()]} {mesSelecionado.getFullYear()}</h3>
                   <button
                     className={styles.btnMes}
-                    onClick={() => setMesSelecionado(new Date(mesSelecionado.getFullYear(), mesSelecionado.getMonth() + 1))}
+                    onClick={() => {
+                      setMesSelecionado(new Date(mesSelecionado.getFullYear(), mesSelecionado.getMonth() + 1))
+                      setDataSelecionada(null)
+                      setHorarioSelecionado(null)
+                    }}
                   >›</button>
                 </div>
                 <div className={styles.calendarioSemana}>
@@ -217,7 +333,8 @@ function Agendar() {
                 </div>
                 <div className={styles.calendarioDias}>
                   {gerarDiasDoMes(mesSelecionado).map((dia, index) => (
-                    <div
+                    <button
+                      type="button"
                       key={index}
                       className={`
                         ${styles.dia}
@@ -230,12 +347,16 @@ function Agendar() {
                           mesSelecionado.getFullYear() === hoje.getFullYear()
                           ? styles.diaHoje : ''}
                       `}
+                      disabled={!dia || isDiaPassado(dia)}
                       onClick={() => {
-                        if (dia && !isDiaPassado(dia)) setDataSelecionada(dia)
+                        if (dia && !isDiaPassado(dia)) {
+                          setDataSelecionada(dia)
+                          setHorarioSelecionado(null)
+                        }
                       }}
                     >
                       {dia}
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -250,7 +371,8 @@ function Agendar() {
                 </p>
                 <div className={styles.horariosGrid}>
                   {horarios.map(horario => (
-                    <div
+                    <button
+                      type="button"
                       key={horario}
                       className={`${styles.horarioItem} ${
                         horarioSelecionado === horario ? styles.selecionado : ''
@@ -258,9 +380,12 @@ function Agendar() {
                       onClick={() => setHorarioSelecionado(horario)}
                     >
                       {horario}
-                    </div>
+                    </button>
                   ))}
                 </div>
+                {horarios.length === 0 && (
+                  <p role="status">Não há horários disponíveis para este serviço dentro do expediente.</p>
+                )}
               </div>
             )}
 
@@ -286,9 +411,9 @@ function Agendar() {
                 <button
                   className={styles.btnConfirmar}
                   onClick={handleConfirmar}
-                  disabled={!podeContinuar()}
+                  disabled={!podeContinuar() || salvando}
                 >
-                  ✓ Confirmar Agendamento
+                  {salvando ? 'Salvando...' : '✓ Confirmar Agendamento'}
                 </button>
               )}
             </div>

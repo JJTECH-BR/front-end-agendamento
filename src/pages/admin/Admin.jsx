@@ -1,474 +1,455 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import api from '../../services/api'
+import { urlDaEmpresa } from '../../services/company'
+import ServicesPanel from './ServicesPanel'
+import ProfessionalsPanel from './ProfessionalsPanel'
+import CompanyProfilePanel from './CompanyProfilePanel'
 import styles from './Admin.module.css'
+
+const menus = [
+  { id: 'dashboard', label: 'Dashboard', icone: '▦' },
+  { id: 'agendamentos', label: 'Agendamentos', icone: '▣' },
+  { id: 'profissionais', label: 'Profissionais', icone: '♙' },
+  { id: 'servicos', label: 'Serviços', icone: '✂' },
+  { id: 'conteudo', label: 'Conteúdo', icone: '▤' },
+  { id: 'configuracoes', label: 'Configurações', icone: '⚙' },
+  { id: 'relatorios', label: 'Relatórios', icone: '▥' },
+]
+
+const statusInfo = {
+  PENDING: { label: 'Pendente', className: 'pending' },
+  CONFIRMED: { label: 'Confirmado', className: 'confirmado' },
+  CANCELLED: { label: 'Cancelado', className: 'cancelled' },
+  COMPLETED: { label: 'Concluído', className: 'completed' },
+}
+
+function lerUsuario() {
+  try {
+    return JSON.parse(localStorage.getItem('usuario') || '{"name":"Admin"}')
+  } catch {
+    return { name: 'Admin' }
+  }
+}
+
+function dataLocal(date) {
+  const value = new Date(date)
+  return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`
+}
+
+function formatarValor(valor) {
+  return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+}
+
+function formatarData(date, options = { day: '2-digit', month: '2-digit', year: 'numeric' }) {
+  return new Date(date).toLocaleDateString('pt-BR', options)
+}
+
+function formatarHorario(date) {
+  return new Date(date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
 
 function Admin() {
   const navigate = useNavigate()
-  const { slug } = useParams()
+  const location = useLocation()
+  const { slug: slugDaUrl } = useParams()
+  const [abaAtiva, setAbaAtiva] = useState(location.state?.tab || 'dashboard')
+  const [linkStatus, setLinkStatus] = useState('')
+  const [agendamentos, setAgendamentos] = useState([])
+  const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true)
+  const [erroAgendamentos, setErroAgendamentos] = useState('')
+  const [salvandoId, setSalvandoId] = useState(null)
+  const [statusFiltro, setStatusFiltro] = useState('TODOS')
+  const [dataFiltro, setDataFiltro] = useState('')
+  const [mesRelatorio, setMesRelatorio] = useState(() => {
+    const today = new Date()
+    return new Date(today.getFullYear(), today.getMonth(), 1)
+  })
+  const usuario = lerUsuario()
+  const linkAgendamento = `${window.location.origin}${urlDaEmpresa('', slugDaUrl)}`
 
-  const usuario = JSON.parse(localStorage.getItem('usuario') || '{"name": "Admin"}')
+  const carregarAgendamentos = useCallback(async () => {
+    setCarregandoAgendamentos(true)
+    setErroAgendamentos('')
+    try {
+      const { data } = await api.get('/appointments')
+      setAgendamentos(data)
+    } catch (requestError) {
+      setErroAgendamentos(requestError.response?.data?.error || 'Não foi possível carregar os agendamentos.')
+    } finally {
+      setCarregandoAgendamentos(false)
+    }
+  }, [])
 
-  const [abaAtiva, setAbaAtiva] = useState('dashboard')
-  const [copiado, setCopiado] = useState(false)
+  useEffect(() => {
+    carregarAgendamentos()
+  }, [carregarAgendamentos])
 
-  // Monta o link dinâmico da empresa logada
-  const linkAgendamento = `${window.location.origin}/e/${slug}`
-
-  const handleCopiarLink = async () => {
+  const copiarLink = async () => {
     try {
       await navigator.clipboard.writeText(linkAgendamento)
-      setCopiado(true)
-      setTimeout(() => setCopiado(false), 3000)
-    } catch (err) {
-      console.error('Erro ao copiar link:', err)
+      setLinkStatus('Link copiado.')
+    } catch {
+      setLinkStatus('Não foi possível copiar o link neste navegador.')
     }
   }
-
-  const [servicos, setServicos] = useState([
-    { id: 1, nome: 'Corte de Cabelo', duracao: '60 min', preco: 80.00, ativo: true },
-    { id: 2, nome: 'Coloração', duracao: '120 min', preco: 150.00, ativo: true },
-    { id: 3, nome: 'Manicure', duracao: '45 min', preco: 45.00, ativo: true },
-    { id: 4, nome: 'Pedicure', duracao: '50 min', preco: 50.00, ativo: true },
-    { id: 5, nome: 'Escova', duracao: '60 min', preco: 60.00, ativo: true },
-    { id: 6, nome: 'Sobrancelha', duracao: '30 min', preco: 35.00, ativo: false },
-  ])
-
-  const [agendamentosHoje] = useState([
-    { id: 1, cliente: 'Juliana Freitas', servico: 'Corte de Cabelo', hora: '09:00', profissional: 'Ana Paula', status: 'confirmado' },
-    { id: 2, cliente: 'Maria Silva', servico: 'Manicure', hora: '10:00', profissional: 'Carla Silva', status: 'confirmado' },
-    { id: 3, cliente: 'Ana Costa', servico: 'Coloração', hora: '11:00', profissional: 'Ana Paula', status: 'pendente' },
-    { id: 4, cliente: 'Paula Rocha', servico: 'Escova', hora: '14:00', profissional: 'Ana Paula', status: 'confirmado' },
-    { id: 5, cliente: 'Carla Lima', servico: 'Pedicure', hora: '15:30', profissional: 'Carla Silva', status: 'pendente' },
-  ])
-
-  const [clientes] = useState([
-    { id: 1, nome: 'Juliana Freitas', email: 'juliana@email.com', agendamentos: 5, ultimoServico: 'Corte de Cabelo' },
-    { id: 2, nome: 'Maria Silva', email: 'maria@email.com', agendamentos: 3, ultimoServico: 'Manicure' },
-    { id: 3, nome: 'Ana Costa', email: 'ana@email.com', agendamentos: 8, ultimoServico: 'Coloração' },
-    { id: 4, nome: 'Paula Rocha', email: 'paula@email.com', agendamentos: 2, ultimoServico: 'Escova' },
-  ])
-
-  const [novoServico, setNovoServico] = useState({ nome: '', duracao: '', preco: '' })
-  const [mostrarFormServico, setMostrarFormServico] = useState(false)
-
-  const formatarValor = (valor) =>
-    valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-
-  const totalHoje = agendamentosHoje.reduce((acc, a) => {
-    const servico = servicos.find(s => s.nome === a.servico)
-    return acc + (servico?.preco || 0)
-  }, 0)
 
   const handleSair = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('usuario')
-    navigate('/')
+    navigate(urlDaEmpresa('admin/login', slugDaUrl), { replace: true })
   }
 
-  const handleAdicionarServico = () => {
-    if (!novoServico.nome || !novoServico.duracao || !novoServico.preco) return
-    setServicos([...servicos, {
-      id: servicos.length + 1,
-      nome: novoServico.nome,
-      duracao: novoServico.duracao,
-      preco: parseFloat(novoServico.preco),
-      ativo: true
-    }])
-    setNovoServico({ nome: '', duracao: '', preco: '' })
-    setMostrarFormServico(false)
-  }
-
-  const handleToggleServico = (id) => {
-    setServicos(servicos.map(s =>
-      s.id === id ? { ...s, ativo: !s.ativo } : s
-    ))
-  }
-
-  const handleRemoverServico = (id) => {
-    if (window.confirm('Tem certeza que deseja remover este serviço?')) {
-      setServicos(servicos.filter(s => s.id !== id))
+  const alterarStatus = async (id, status) => {
+    setSalvandoId(id)
+    setErroAgendamentos('')
+    try {
+      await api.patch(`/appointments/${id}`, { status })
+      await carregarAgendamentos()
+    } catch (requestError) {
+      setErroAgendamentos(requestError.response?.data?.error || 'Não foi possível atualizar o agendamento.')
+    } finally {
+      setSalvandoId(null)
     }
   }
 
-  const menus = [
-    { id: 'dashboard', label: 'Dashboard', icone: '📊' },
-    { id: 'agendamentos', label: 'Agendamentos', icone: '📅' },
-    { id: 'servicos', label: 'Serviços', icone: '✂️' },
-    { id: 'clientes', label: 'Clientes', icone: '👥' },
-  ]
+  const hoje = new Date()
+  const hojeKey = dataLocal(hoje)
+  const agendamentosHoje = agendamentos.filter((item) => dataLocal(item.date) === hojeKey)
+  const mesKey = `${mesRelatorio.getFullYear()}-${String(mesRelatorio.getMonth() + 1).padStart(2, '0')}`
+  const agendamentosDoMes = agendamentos.filter((item) => dataLocal(item.date).startsWith(mesKey))
+  const concluidosDoMes = agendamentosDoMes.filter((item) => item.status === 'COMPLETED')
+  const faturamentoMes = concluidosDoMes.reduce(
+    (sum, item) => sum + Number(item.price ?? item.service?.price ?? 0),
+    0,
+  )
+
+  const filtrados = useMemo(() => agendamentos
+    .filter((item) => statusFiltro === 'TODOS' || item.status === statusFiltro)
+    .filter((item) => !dataFiltro || dataLocal(item.date) === dataFiltro)
+    .sort((a, b) => new Date(a.date) - new Date(b.date)), [agendamentos, statusFiltro, dataFiltro])
+
+  const statusBadge = (status) => {
+    const info = statusInfo[status] || { label: status, className: '' }
+    return <span className={`${styles.statusTag} ${styles[info.className] || ''}`}>{info.label}</span>
+  }
+
+  const renderAcoes = (item) => (
+    <div className={styles.acoes}>
+      {item.status === 'PENDING' && (
+        <button
+          type="button"
+          className={styles.btnAcaoConfirmar}
+          disabled={salvandoId === item.id}
+          aria-label={`Confirmar agendamento de ${item.client.name}`}
+          onClick={() => alterarStatus(item.id, 'CONFIRMED')}
+        >✓</button>
+      )}
+      {(item.status === 'PENDING' || item.status === 'CONFIRMED') && (
+        <>
+          <button
+            type="button"
+            className={styles.btnAcaoConcluir}
+            disabled={salvandoId === item.id}
+            aria-label={`Concluir agendamento de ${item.client.name}`}
+            onClick={() => alterarStatus(item.id, 'COMPLETED')}
+          >●</button>
+          <button
+            type="button"
+            className={styles.btnAcaoCancelar}
+            disabled={salvandoId === item.id}
+            aria-label={`Cancelar agendamento de ${item.client.name}`}
+            onClick={() => alterarStatus(item.id, 'CANCELLED')}
+          >×</button>
+        </>
+      )}
+    </div>
+  )
+
+  const renderTabelaAgendamentos = (lista) => (
+    carregandoAgendamentos ? (
+      <p className={styles.placeholder} role="status">Carregando agendamentos...</p>
+    ) : lista.length === 0 ? (
+      <p className={styles.placeholder}>Nenhum agendamento encontrado.</p>
+    ) : (
+      <div className={styles.tabelaWrapper}>
+        <table className={styles.tabela}>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Serviço</th>
+              <th>Profissional</th>
+              <th>Data e horário</th>
+              <th>Status</th>
+              <th>Valor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lista.map((item) => (
+              <tr key={item.id}>
+                <td>{item.client?.name || 'Cliente'}</td>
+                <td>{item.service?.name || 'Serviço'}</td>
+                <td>{item.professional?.name || '—'}</td>
+                <td>{formatarData(item.date)} às {formatarHorario(item.date)}</td>
+                <td>{statusBadge(item.status)}</td>
+                <td>{formatarValor(item.price ?? item.service?.price)}</td>
+                <td>{renderAcoes(item)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  )
+
+  const somaPor = (lista, obterNome) => {
+    const agrupado = new Map()
+    lista.forEach((item) => {
+      const nome = obterNome(item) || 'Sem identificação'
+      agrupado.set(nome, (agrupado.get(nome) || 0) + 1)
+    })
+    return [...agrupado.entries()].sort((a, b) => b[1] - a[1])
+  }
+
+  const porServico = somaPor(agendamentosDoMes, (item) => item.service?.name)
+  const porProfissional = somaPor(agendamentosDoMes, (item) => item.professional?.name)
+  const porDia = [...agendamentosDoMes.reduce((acc, item) => {
+    const key = dataLocal(item.date)
+    const atual = acc.get(key) || { total: 0, valor: 0 }
+    atual.total += 1
+    if (item.status === 'COMPLETED') atual.valor += Number(item.price ?? item.service?.price ?? 0)
+    acc.set(key, atual)
+    return acc
+  }, new Map()).entries()].sort(([a], [b]) => a.localeCompare(b))
 
   return (
     <div className={styles.pagina}>
+      <header className={styles.topbar}>
+        <button
+          type="button"
+          className={styles.brand}
+          onClick={() => navigate(urlDaEmpresa('', slugDaUrl))}
+          aria-label="Ir para a página inicial"
+        >
+          <span className={styles.logoCirculo}>JJ</span>
+          <span>JJTech</span>
+        </button>
+        <nav className={styles.topLinks} aria-label="Links da conta">
+          <button type="button" onClick={() => navigate(urlDaEmpresa('', slugDaUrl))}>Sobre</button>
+          <button type="button" onClick={() => setAbaAtiva('servicos')}>Serviços</button>
+          <button type="button" onClick={() => setAbaAtiva('profissionais')}>Equipe</button>
+          <button type="button" className={styles.topLinkAtivo} onClick={() => setAbaAtiva('dashboard')}>Admin</button>
+          <button type="button" onClick={() => navigate(urlDaEmpresa('dashboard', slugDaUrl))}>Meus Agendamentos</button>
+          <button type="button" onClick={() => setAbaAtiva('configuracoes')}>Configurações</button>
+          <button type="button" className={styles.topSair} onClick={handleSair}>Sair</button>
+        </nav>
+      </header>
 
-      {/* SIDEBAR */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarLogo}>
-          <div className={styles.logoCirculo}>JJ</div>
+      <main className={styles.main}>
+        <div className={styles.header}>
           <div>
-            <span className={styles.sidebarNome}>JJTech</span>
-            <span className={styles.sidebarCargo}>Painel Admin</span>
+            <button type="button" className={styles.backButton} onClick={() => navigate(urlDaEmpresa('', slugDaUrl))}>
+              ← Voltar
+            </button>
+            <h1>Painel Administrativo</h1>
+            <p>Olá, {usuario.name}. Gerencie seu espaço em um só lugar.</p>
+          </div>
+          <div className={styles.adminAvatar} aria-hidden="true">
+            {usuario.name?.charAt(0).toUpperCase() || 'A'}
           </div>
         </div>
 
-        <nav className={styles.sidebarNav}>
-          {menus.map(menu => (
+        <nav className={styles.tabs} aria-label="Navegação do painel">
+          {menus.map((menu) => (
             <button
               key={menu.id}
-              className={`${styles.menuItem} ${abaAtiva === menu.id ? styles.menuItemAtivo : ''}`}
+              type="button"
+              className={`${styles.tab} ${abaAtiva === menu.id ? styles.tabAtiva : ''}`}
               onClick={() => setAbaAtiva(menu.id)}
+              aria-current={abaAtiva === menu.id ? 'page' : undefined}
             >
-              <span>{menu.icone}</span>
-              <span>{menu.label}</span>
+              <span aria-hidden="true">{menu.icone}</span>{menu.label}
             </button>
           ))}
         </nav>
 
-        <div className={styles.sidebarRodape}>
-          <div className={styles.adminInfo}>
-            <div className={styles.adminAvatar}>
-              {usuario.name?.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className={styles.adminNome}>{usuario.name}</p>
-              <p className={styles.adminRole}>Administrador</p>
-            </div>
-          </div>
-          <button className={styles.btnSair} onClick={handleSair}>Sair</button>
-        </div>
-      </aside>
+        {erroAgendamentos && <p className={styles.feedbackErro} role="alert">{erroAgendamentos}</p>}
+        {abaAtiva === 'servicos' && <ServicesPanel />}
+        {abaAtiva === 'profissionais' && (
+          <ProfessionalsPanel onHistory={() => setAbaAtiva('agendamentos')} />
+        )}
+        {abaAtiva === 'conteudo' && <CompanyProfilePanel mode="content" />}
+        {abaAtiva === 'configuracoes' && <CompanyProfilePanel mode="settings" />}
 
-      {/* CONTEÚDO PRINCIPAL */}
-      <main className={styles.main}>
-
-        {/* HEADER */}
-        <div className={styles.header}>
-          <div>
-            <h1>{menus.find(m => m.id === abaAtiva)?.label}</h1>
-            <p>
-              {abaAtiva === 'dashboard' && 'Visão geral do seu negócio hoje'}
-              {abaAtiva === 'agendamentos' && 'Gerencie os agendamentos do dia'}
-              {abaAtiva === 'servicos' && 'Gerencie os serviços disponíveis'}
-              {abaAtiva === 'clientes' && 'Visualize e gerencie seus clientes'}
-            </p>
-          </div>
-        </div>
-
-        {/* ABA DASHBOARD */}
         {abaAtiva === 'dashboard' && (
           <div className={styles.conteudo}>
+            <section className={styles.linkEmpresa}>
+              <div>
+                <h2>Link de agendamento</h2>
+                <p>Compartilhe o endereço com seus clientes.</p>
+              </div>
+              <div className={styles.linkEmpresaAcoes}>
+                <input aria-label="Link de agendamento" value={linkAgendamento} readOnly />
+                <button type="button" className={styles.btnSalvar} onClick={copiarLink}>Copiar link</button>
+              </div>
+              {linkStatus && <p className={styles.linkStatus} role="status">{linkStatus}</p>}
+            </section>
 
-            {/* CARD DE COMPARTILHAMENTO DO LINK */}
-            <div className={styles.card} style={{ marginBottom: '1.5rem', background: '#1e293b', color: '#fff', border: '1px solid #334155' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <section className={styles.dashboardSection}>
+              <div className={styles.sectionHeader}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    🔗 Link da Sua Empresa
-                  </h3>
-                  <p style={{ margin: '0.3rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-                    Compartilhe este endereço com seus clientes para receber agendamentos:
-                  </p>
+                  <h2 className={styles.cardTitulo}>Resumo de hoje</h2>
+                  <p className={styles.sectionDescription}>{formatarData(hoje, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                 </div>
+              </div>
+              <div className={styles.resumoGrid}>
+                <article className={styles.resumoCard}>
+                  <span className={styles.resumoIcone}>▣</span>
+                  <div><span className={styles.resumoLabel}>Agendamentos hoje</span>
+                    <strong className={styles.resumoNumero}>{carregandoAgendamentos ? '—' : agendamentosHoje.length}</strong></div>
+                </article>
+                <article className={styles.resumoCard}>
+                  <span className={`${styles.resumoIcone} ${styles.iconeVerde}`}>✓</span>
+                  <div><span className={styles.resumoLabel}>Confirmados</span>
+                    <strong className={styles.resumoNumero}>{agendamentosHoje.filter((item) => item.status === 'CONFIRMED').length}</strong></div>
+                </article>
+                <article className={styles.resumoCard}>
+                  <span className={`${styles.resumoIcone} ${styles.iconeDourado}`}>$</span>
+                  <div><span className={styles.resumoLabel}>Valor previsto hoje</span>
+                    <strong className={styles.resumoNumero}>{formatarValor(agendamentosHoje
+                      .filter((item) => item.status !== 'CANCELLED')
+                      .reduce((sum, item) => sum + Number(item.price ?? item.service?.price ?? 0), 0))}</strong></div>
+                </article>
+                <article className={styles.resumoCard}>
+                  <span className={`${styles.resumoIcone} ${styles.iconeVermelho}`}>↗</span>
+                  <div><span className={styles.resumoLabel}>Faturamento do mês</span>
+                    <strong className={styles.resumoNumero}>{formatarValor(faturamentoMes)}</strong></div>
+                </article>
+              </div>
+            </section>
 
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <input
-                    type="text"
-                    value={linkAgendamento}
-                    readOnly
-                    style={{
-                      background: '#0f172a',
-                      border: '1px solid #475569',
-                      borderRadius: '8px',
-                      color: '#38bdf8',
-                      padding: '0.5rem 0.75rem',
-                      fontSize: '0.875rem',
-                      minWidth: '260px'
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleCopiarLink}
-                    style={{
-                      background: copiado ? '#22c55e' : '#3b82f6',
-                      color: '#fff',
-                      border: 'none',
-                      padding: '0.55rem 1rem',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                      transition: '0.2s'
-                    }}
-                  >
-                    {copiado ? '✅ Copiado!' : '📋 Copiar Link'}
-                  </button>
-                  <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Olá! Agende seu horário no nosso site: ${linkAgendamento}`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      background: '#25D366',
-                      color: '#fff',
-                      textDecoration: 'none',
-                      padding: '0.55rem 1rem',
-                      borderRadius: '8px',
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.4rem'
-                    }}
-                  >
-                    💬 WhatsApp
-                  </a>
-                </div>
-              </div>
-            </div>
+            <section className={styles.dashboardDuasColunas}>
+              <article className={styles.card}>
+                <h2 className={styles.cardTitulo}>Agendamentos por serviço</h2>
+                {porServico.length ? porServico.slice(0, 5).map(([label, count]) => (
+                  <div className={styles.miniBarra} key={label}>
+                    <span>{label}</span><strong>{count}</strong>
+                    <div><i style={{ width: `${Math.max(8, count / Math.max(...porServico.map((item) => item[1])) * 100)}%` }} /></div>
+                  </div>
+                )) : <p className={styles.placeholder}>Nenhum agendamento neste mês.</p>}
+              </article>
+              <article className={styles.card}>
+                <h2 className={styles.cardTitulo}>Agendamentos por profissional</h2>
+                {porProfissional.length ? porProfissional.slice(0, 5).map(([label, count]) => (
+                  <div className={styles.miniBarra} key={label}>
+                    <span>{label}</span><strong>{count}</strong>
+                    <div><i style={{ width: `${Math.max(8, count / Math.max(...porProfissional.map((item) => item[1])) * 100)}%` }} /></div>
+                  </div>
+                )) : <p className={styles.placeholder}>Nenhum agendamento neste mês.</p>}
+              </article>
+            </section>
 
-            <div className={styles.resumoGrid}>
-              <div className={styles.resumoCard}>
-                <div className={styles.resumoIcone}>📅</div>
-                <div>
-                  <p className={styles.resumoNumero}>{agendamentosHoje.length}</p>
-                  <p className={styles.resumoLabel}>Agendamentos Hoje</p>
-                </div>
-              </div>
-              <div className={styles.resumoCard}>
-                <div className={styles.resumoIcone}>✅</div>
-                <div>
-                  <p className={styles.resumoNumero}>
-                    {agendamentosHoje.filter(a => a.status === 'confirmado').length}
-                  </p>
-                  <p className={styles.resumoLabel}>Confirmados</p>
-                </div>
-              </div>
-              <div className={styles.resumoCard}>
-                <div className={styles.resumoIcone}>⏳</div>
-                <div>
-                  <p className={styles.resumoNumero}>
-                    {agendamentosHoje.filter(a => a.status === 'pendente').length}
-                  </p>
-                  <p className={styles.resumoLabel}>Pendentes</p>
-                </div>
-              </div>
-              <div className={styles.resumoCard}>
-                <div className={styles.resumoIcone}>💰</div>
-                <div>
-                  <p className={styles.resumoNumero}>{formatarValor(totalHoje)}</p>
-                  <p className={styles.resumoLabel}>Faturamento Hoje</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.card}>
-              <h3 className={styles.cardTitulo}>📅 Agendamentos de Hoje</h3>
-              <div className={styles.tabelaWrapper}>
-                <table className={styles.tabela}>
-                  <thead>
-                    <tr>
-                      <th>Horário</th>
-                      <th>Cliente</th>
-                      <th>Serviço</th>
-                      <th>Profissional</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {agendamentosHoje.map(a => (
-                      <tr key={a.id}>
-                        <td><strong>{a.hora}</strong></td>
-                        <td>{a.cliente}</td>
-                        <td>{a.servico}</td>
-                        <td>{a.profissional}</td>
-                        <td>
-                          <span className={`${styles.badge} ${styles[a.status]}`}>
-                            {a.status === 'confirmado' ? '✅ Confirmado' : '⏳ Pendente'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ABA AGENDAMENTOS */}
-        {abaAtiva === 'agendamentos' && (
-          <div className={styles.conteudo}>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitulo}>📅 Todos os Agendamentos</h3>
-              <div className={styles.tabelaWrapper}>
-                <table className={styles.tabela}>
-                  <thead>
-                    <tr>
-                      <th>Horário</th>
-                      <th>Cliente</th>
-                      <th>Serviço</th>
-                      <th>Profissional</th>
-                      <th>Valor</th>
-                      <th>Status</th>
-                      <th>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {agendamentosHoje.map(a => (
-                      <tr key={a.id}>
-                        <td><strong>{a.hora}</strong></td>
-                        <td>{a.cliente}</td>
-                        <td>{a.servico}</td>
-                        <td>{a.profissional}</td>
-                        <td>{formatarValor(servicos.find(s => s.nome === a.servico)?.preco || 0)}</td>
-                        <td>
-                          <span className={`${styles.badge} ${styles[a.status]}`}>
-                            {a.status === 'confirmado' ? '✅ Confirmado' : '⏳ Pendente'}
-                          </span>
-                        </td>
-                        <td>
-                          <div className={styles.acoes}>
-                            <button className={styles.btnAcaoConfirmar}>✅</button>
-                            <button className={styles.btnAcaoCancelar}>✕</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ABA SERVIÇOS */}
-        {abaAtiva === 'servicos' && (
-          <div className={styles.conteudo}>
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitulo}>✂️ Serviços Cadastrados</h3>
-                <button
-                  className={styles.btnAdicionar}
-                  onClick={() => setMostrarFormServico(!mostrarFormServico)}
-                >
-                  + Novo Serviço
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.cardTitulo}>Agenda de hoje</h2>
+                <button type="button" className={styles.textButton} onClick={() => setAbaAtiva('agendamentos')}>
+                  Ver todos
                 </button>
               </div>
-
-              {mostrarFormServico && (
-                <div className={styles.formNovoServico}>
-                  <h4>Novo Serviço</h4>
-                  <div className={styles.formGrid}>
-                    <div className={styles.formGrupo}>
-                      <label>Nome do Serviço</label>
-                      <input
-                        type="text"
-                        placeholder="Ex: Hidratação"
-                        value={novoServico.nome}
-                        onChange={(e) => setNovoServico({ ...novoServico, nome: e.target.value })}
-                        className={styles.input}
-                      />
-                    </div>
-                    <div className={styles.formGrupo}>
-                      <label>Duração</label>
-                      <input
-                        type="text"
-                        placeholder="Ex: 60 min"
-                        value={novoServico.duracao}
-                        onChange={(e) => setNovoServico({ ...novoServico, duracao: e.target.value })}
-                        className={styles.input}
-                      />
-                    </div>
-                    <div className={styles.formGrupo}>
-                      <label>Preço (R$)</label>
-                      <input
-                        type="number"
-                        placeholder="Ex: 80"
-                        value={novoServico.preco}
-                        onChange={(e) => setNovoServico({ ...novoServico, preco: e.target.value })}
-                        className={styles.input}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.formBtns}>
-                    <button className={styles.btnSalvar} onClick={handleAdicionarServico}>
-                      Salvar Serviço
-                    </button>
-                    <button
-                      className={styles.btnCancelarForm}
-                      onClick={() => setMostrarFormServico(false)}
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className={styles.servicosLista}>
-                {servicos.map(servico => (
-                  <div key={servico.id} className={`${styles.servicoItem} ${!servico.ativo ? styles.servicoInativo : ''}`}>
-                    <div className={styles.servicoInfo}>
-                      <h4>{servico.nome}</h4>
-                      <div className={styles.servicoDetalhes}>
-                        <span>⏱ {servico.duracao}</span>
-                        <span>{formatarValor(servico.preco)}</span>
-                      </div>
-                    </div>
-                    <div className={styles.servicoAcoes}>
-                      <button
-                        className={`${styles.btnToggle} ${servico.ativo ? styles.btnToggleAtivo : styles.btnToggleInativo}`}
-                        onClick={() => handleToggleServico(servico.id)}
-                      >
-                        {servico.ativo ? '✅ Ativo' : '❌ Inativo'}
-                      </button>
-                      <button
-                        className={styles.btnRemover}
-                        onClick={() => handleRemoverServico(servico.id)}
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+              {renderTabelaAgendamentos(agendamentosHoje)}
+            </section>
           </div>
         )}
 
-        {/* ABA CLIENTES */}
-        {abaAtiva === 'clientes' && (
+        {abaAtiva === 'agendamentos' && (
+          <section className={`${styles.card} ${styles.appointmentsPanel}`}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <h2 className={styles.cardTitulo}>Todos os agendamentos</h2>
+                <p className={styles.sectionDescription}>{filtrados.length} registro(s)</p>
+              </div>
+              <div className={styles.filtrosAgenda}>
+                <label>
+                  <span className={styles.srOnly}>Filtrar por status</span>
+                  <select className={styles.input} value={statusFiltro} onChange={(event) => setStatusFiltro(event.target.value)}>
+                    <option value="TODOS">Todos os status</option>
+                    {Object.entries(statusInfo).map(([value, info]) => <option key={value} value={value}>{info.label}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <span className={styles.srOnly}>Filtrar por data</span>
+                  <input className={styles.input} type="date" value={dataFiltro} onChange={(event) => setDataFiltro(event.target.value)} />
+                </label>
+                {(statusFiltro !== 'TODOS' || dataFiltro) && (
+                  <button type="button" className={styles.textButton} onClick={() => { setStatusFiltro('TODOS'); setDataFiltro('') }}>
+                    Limpar
+                  </button>
+                )}
+              </div>
+            </div>
+            {renderTabelaAgendamentos(filtrados)}
+          </section>
+        )}
+
+        {abaAtiva === 'relatorios' && (
           <div className={styles.conteudo}>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitulo}>👥 Lista de Clientes</h3>
-              <div className={styles.tabelaWrapper}>
-                <table className={styles.tabela}>
-                  <thead>
-                    <tr>
-                      <th>Cliente</th>
-                      <th>E-mail</th>
-                      <th>Total de Agendamentos</th>
-                      <th>Último Serviço</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {clientes.map(cliente => (
-                      <tr key={cliente.id}>
-                        <td>
-                          <div className={styles.clienteNome}>
-                            <div className={styles.clienteAvatar}>
-                              {cliente.nome.charAt(0)}
-                            </div>
-                            {cliente.nome}
-                          </div>
-                        </td>
-                        <td>{cliente.email}</td>
-                        <td>{cliente.agendamentos} agendamentos</td>
-                        <td>{cliente.ultimoServico}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.cardTitulo}>
+                  Relatório — {mesRelatorio.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                </h2>
+                <div className={styles.filtrosAgenda}>
+                  <button type="button" className={styles.btnSecundario} onClick={() => setMesRelatorio(new Date(mesRelatorio.getFullYear(), mesRelatorio.getMonth() - 1, 1))}>
+                    Mês anterior
+                  </button>
+                  <button type="button" className={styles.btnSecundario} onClick={() => setMesRelatorio(new Date(mesRelatorio.getFullYear(), mesRelatorio.getMonth() + 1, 1))}>
+                    Próximo mês
+                  </button>
+                </div>
               </div>
-            </div>
+              <div className={styles.resumoGrid}>
+                <article className={styles.relatorioCard}>
+                  <span className={styles.resumoLabel}>Agendamentos</span>
+                  <strong className={styles.resumoNumero}>{agendamentosDoMes.length}</strong>
+                </article>
+                <article className={styles.relatorioCard}>
+                  <span className={styles.resumoLabel}>Faturamento concluído</span>
+                  <strong className={`${styles.resumoNumero} ${styles.valorDestaque}`}>{formatarValor(faturamentoMes)}</strong>
+                </article>
+                <article className={styles.relatorioCard}>
+                  <span className={styles.resumoLabel}>Ticket médio</span>
+                  <strong className={styles.resumoNumero}>{formatarValor(concluidosDoMes.length ? faturamentoMes / concluidosDoMes.length : 0)}</strong>
+                </article>
+              </div>
+            </section>
+
+            <section className={styles.dashboardDuasColunas}>
+              {[[porServico, 'Por serviço'], [porProfissional, 'Por profissional']].map(([groups, title]) => (
+                <article className={styles.card} key={title}>
+                  <h2 className={styles.cardTitulo}>{title}</h2>
+                  {groups.length ? groups.map(([label, count]) => (
+                    <div className={styles.reportRow} key={label}><span>{label}</span><strong>{count} agendamento(s)</strong></div>
+                  )) : <p className={styles.placeholder}>Sem dados para este mês.</p>}
+                </article>
+              ))}
+            </section>
+
+            <section className={styles.card}>
+              <h2 className={styles.cardTitulo}>Detalhamento por dia</h2>
+              {porDia.length ? (
+                <div className={styles.tabelaWrapper}>
+                  <table className={styles.tabela}>
+                    <thead><tr><th>Data</th><th>Agendamentos</th><th>Faturamento concluído</th></tr></thead>
+                    <tbody>{porDia.map(([date, summary]) => (
+                      <tr key={date}><td>{formatarData(`${date}T12:00:00`)}</td><td>{summary.total}</td><td>{formatarValor(summary.valor)}</td></tr>
+                    ))}</tbody>
+                  </table>
+                </div>
+              ) : <p className={styles.placeholder}>Sem dados para este mês.</p>}
+            </section>
           </div>
         )}
-
       </main>
     </div>
   )

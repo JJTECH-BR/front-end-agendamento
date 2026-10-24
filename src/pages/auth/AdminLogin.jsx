@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import api from '../../services/api'
 import AuthLayout from './AuthLayout'
-import { getSlug, setSlug } from '../../services/company'
+import { getSlug, setSlug, urlDaEmpresa } from '../../services/company'
 import styles from './auth.module.css'
 
 function AdminLogin() {
@@ -48,9 +48,13 @@ function AdminLogin() {
       localStorage.setItem('token', token)
       localStorage.setItem('usuario', JSON.stringify(usuario))
 
-      navigate(`/e/${slug}/admin`)
+      navigate(urlDaEmpresa('admin', slug))
     } catch (error) {
-      setErro(error.response?.data?.message || 'Email ou senha incorretos')
+      setErro(
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        'Não foi possível entrar. Verifique sua conexão e tente novamente.'
+      )
     } finally {
       setCarregando(false)
     }
@@ -85,7 +89,7 @@ function AdminLogin() {
               <span>🔒</span>
               <input
                 type="password"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
               />
@@ -108,7 +112,7 @@ function AdminLogin() {
           <button
             type="button"
             className={styles.linkBtn}
-            onClick={() => navigate(`/e/${slug}/admin/cadastro`)}
+            onClick={() => navigate(urlDaEmpresa('admin/cadastro', slug))}
           >
             Criar conta
           </button>

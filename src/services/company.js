@@ -10,8 +10,8 @@ export function setSlug(slug) {
   }
 }
 
-export function urlDaEmpresa(slug, caminho = '') {
-  const base = `/e/${slug || getSlug()}`
+export function urlDaEmpresa(caminho = '', slug = getSlug()) {
+  const base = `/e/${slug}`
   if (!caminho) return base
   return `${base}/${caminho}`.replace(/\/+$/, '')
 }

@@ -604,6 +604,24 @@
   box-shadow: 0 8px 24px rgba(0,170,255,0.3);
 }
 
+.membroAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.membroInstagram {
+  display: inline-block;
+  margin: 0 0 1rem;
+  color: #00aaff;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.membroInstagram:hover {
+  text-decoration: underline;
+}
+
 .membroBadge {
   position: absolute;
   top: 1rem;
@@ -767,4 +785,895 @@
   .navLinks .btnAdmin { display: none; }
   .heroStats { flex-direction: column; gap: 1.5rem; }
   .heroBtns { flex-direction: column; align-items: center; }
+}
+
+.pagina {
+  padding-top: 54px;
+  color: #322824;
+  background: #faf7f5;
+  font-family: 'Lato', sans-serif;
+}
+
+.navbar {
+  min-height: 54px;
+  padding: 0.55rem clamp(1rem, 6vw, 5rem);
+  background: rgba(255, 253, 252, 0.96);
+  border-bottom: 1px solid #eee8e5;
+  box-shadow: 0 2px 12px rgba(72, 49, 42, 0.04);
+  backdrop-filter: blur(14px);
+}
+
+.navLogo {
+  color: #c75366;
+  font-size: 1.12rem;
+}
+
+.logoCirculo {
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  color: #fff;
+  background: #c75366;
+  font-size: 0.68rem;
+  box-shadow: none;
+}
+
+.navLinks {
+  gap: 0.55rem;
+}
+
+.navLinks button {
+  padding: 0.45rem 0.65rem;
+  color: #786b65;
+  font-size: 0.78rem;
+}
+
+.navLinks button:hover {
+  color: #c75366;
+}
+
+.btnCliente,
+.btnAdmin {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid #eee5e3 !important;
+  border-radius: 8px;
+  color: #403733 !important;
+  background: #fff !important;
+  box-shadow: 0 3px 10px rgba(72, 49, 42, 0.05);
+}
+
+.btnAgendar,
+.btnPrimario {
+  border: 0 !important;
+  border-radius: 8px;
+  color: #fff !important;
+  background: linear-gradient(115deg, #cc6172, #ae394f);
+  box-shadow: 0 6px 16px rgba(185, 67, 90, 0.2);
+}
+
+.btnAgendar {
+  padding: 0.5rem 0.85rem !important;
+  font-size: 0.76rem !important;
+}
+
+.btnAgendar:hover,
+.btnPrimario:hover {
+  background: linear-gradient(115deg, #bd5264, #a9364c);
+  box-shadow: 0 8px 20px rgba(185, 67, 90, 0.26);
+}
+
+.hero {
+  min-height: min(540px, calc(100vh - 54px));
+  padding: 5rem 1.5rem 3.25rem;
+  align-items: center;
+}
+
+.heroOverlay {
+  background:
+    linear-gradient(180deg, rgba(255, 247, 245, 0.45), rgba(255, 249, 247, 0.75)),
+    linear-gradient(90deg, rgba(255, 248, 247, 0.22), rgba(255, 246, 245, 0.62) 50%, rgba(255, 248, 247, 0.2));
+}
+
+.heroConteudo {
+  max-width: 660px;
+  padding-top: 1.4rem;
+}
+
+.heroBadge {
+  margin-bottom: 0.7rem;
+  padding: 0.32rem 0.75rem;
+  border: 1px solid #f0dfe0;
+  color: #b35261;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 0.75rem;
+}
+
+.hero h1 {
+  margin-bottom: 0.7rem;
+  color: #302622;
+  font-size: clamp(2.1rem, 4vw, 3rem);
+  text-shadow: none;
+}
+
+.hero h1 span,
+.sectionHeader h2 span {
+  background: none;
+  color: #bf5265;
+  -webkit-text-fill-color: currentColor;
+}
+
+.hero p {
+  max-width: 510px;
+  margin-bottom: 1.35rem;
+  color: #776b66;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.heroBtns {
+  gap: 0.65rem;
+  margin-bottom: 1.9rem;
+}
+
+.heroBtns .btnPrimario,
+.heroBtns .btnSecundario,
+.cta .btnPrimario {
+  min-height: 42px;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.82rem;
+}
+
+.btnSecundario {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  color: #514540;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.btnSecundario:hover {
+  border-color: #d17a88;
+  color: #a93f54;
+  background: #fff;
+}
+
+.heroStats {
+  display: flex;
+  justify-content: center;
+  gap: clamp(2rem, 8vw, 6rem);
+  padding-top: 0;
+  border: 0;
+}
+
+.statNum {
+  margin-bottom: 0.25rem;
+  color: #bf8424;
+  font-size: 1.55rem;
+  text-shadow: none;
+}
+
+.statLabel {
+  color: #766b64;
+  font-size: 0.68rem;
+}
+
+.container {
+  max-width: 1080px;
+  padding: 0 1.5rem;
+}
+
+.sobre,
+.servicos,
+.equipe {
+  padding: 5.6rem 0;
+  color: #322824;
+  background: #faf7f5;
+  border: 0;
+}
+
+.sobre {
+  background: #f8f4f1;
+}
+
+.servicos {
+  background: #fffdfc;
+}
+
+.servicos::before,
+.equipe::before {
+  display: none;
+}
+
+.sectionHeader {
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+}
+
+.sectionLabel {
+  margin-bottom: 0.55rem;
+  padding: 0;
+  border: 0;
+  color: #c75366;
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+}
+
+.sectionHeader h2 {
+  margin-bottom: 0.55rem;
+  color: #302622;
+  font-size: clamp(1.7rem, 3vw, 2.25rem);
+}
+
+.sectionHeader p {
+  max-width: 480px;
+  color: #796d67;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.sectionHeader p + p {
+  margin-top: 0.25rem;
+}
+
+.especialidadesGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.especialidadeCard {
+  padding: 1rem;
+  border: 1px solid #f0e9e6;
+  border-radius: 12px;
+  text-align: left;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(75, 48, 40, 0.05);
+}
+
+.especialidadeCard:hover,
+.servicoCard:hover,
+.membroCard:hover {
+  border-color: #ecd3d5;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(75, 48, 40, 0.08);
+}
+
+.especialidadeIcone {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  margin: 0 0 0.75rem;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: #c75366;
+  background: #f6e9eb;
+  font-size: 1.1rem;
+  box-shadow: none;
+}
+
+.especialidadeCard h3,
+.servicoCard h3,
+.membroInfo h3 {
+  margin: 0 0 0.35rem;
+  color: #322824;
+  font-size: 0.94rem;
+}
+
+.especialidadeCard p {
+  color: #82756f;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.servicosTabs {
+  gap: 0.5rem;
+  margin-bottom: 1.6rem;
+}
+
+.servTab,
+.servTabAtivo {
+  padding: 0.55rem 1rem;
+  border: 1px solid #f0e5e5;
+  color: #a85060;
+  background: #f8edef;
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+.servTab:hover {
+  border-color: #e2b9c0;
+  color: #973d4d;
+  background: #fff;
+}
+
+.servTabAtivo {
+  border-color: #bd4e62;
+  color: #fff;
+  background: #bd4e62;
+  box-shadow: 0 4px 12px rgba(185, 67, 90, 0.16);
+}
+
+.servicosGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.servicoCard {
+  min-height: 132px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem 0.6rem;
+  padding: 1rem;
+  border: 1px solid #f0eae7;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 4px 13px rgba(75, 48, 40, 0.04);
+}
+
+.servicoCard::before,
+.servicoIcone,
+.servicoCard > .btnAgendarItem {
+  display: none;
+}
+
+.servicoCard h3 {
+  grid-column: 1 / 2;
+  font-size: 0.9rem;
+}
+
+.servicoCard > p {
+  grid-column: 1 / -1;
+  color: #83766f;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.servicoMeta {
+  grid-column: 1 / -1;
+  padding-top: 0.55rem;
+  border-top: 1px solid #f1ece9;
+}
+
+.servicoMeta span {
+  color: #83766f;
+  font-size: 0.72rem;
+}
+
+.servicoMeta strong {
+  color: #c58a2c;
+  font-size: 1rem;
+  text-shadow: none;
+}
+
+.emptyCatalog {
+  color: #82756f;
+  text-align: center;
+}
+
+.sectionCta {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.7rem;
+}
+
+.sectionCta .btnPrimario {
+  min-height: 40px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.78rem;
+}
+
+.equipe {
+  background: #f8f4f1;
+}
+
+.equipeGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.membroCard {
+  border: 1px solid #f0e9e6;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(75, 48, 40, 0.05);
+}
+
+.membroFoto {
+  aspect-ratio: 4 / 4.6;
+  background: #eee7e3;
+}
+
+.membroAvatarImage {
+  object-fit: cover;
+}
+
+.membroAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  color: #fff;
+  background: linear-gradient(145deg, #d9b9ad, #be8790);
+  font-size: 3rem;
+  box-shadow: none;
+}
+
+.membroBadge {
+  top: 0.65rem;
+  right: 0.65rem;
+  padding: 0.3rem 0.6rem;
+  border: 0;
+  color: #725b53;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 0.66rem;
+}
+
+.membroInfo {
+  padding: 1rem;
+}
+
+.membroInfo h3 {
+  font-size: 0.96rem;
+}
+
+.membroEspecialidade {
+  margin-bottom: 0.45rem;
+  color: #c75366;
+  font-size: 0.76rem;
+}
+
+.membroDescricao {
+  margin-bottom: 0.7rem;
+  color: #82756f;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.membroInstagram {
+  margin-bottom: 0.7rem;
+  color: #b84c60;
+  font-size: 0.75rem;
+}
+
+.membroInfo .btnAgendarItem {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 0;
+  color: #fff;
+  background: #bd4e62;
+  font-size: 0.74rem;
+}
+
+.membroInfo .btnAgendarItem:hover {
+  background: #a93f54;
+}
+
+.cta {
+  padding: 3.5rem 0;
+  background: #f8f4f1;
+}
+
+.cta h2 {
+  color: #322824;
+  font-size: 1.8rem;
+}
+
+.cta p {
+  margin-bottom: 1.4rem;
+  color: #82756f;
+  font-size: 0.9rem;
+}
+
+.footer {
+  padding: 2.6rem 0 0;
+  color: #f7efec;
+  background: #302521;
+  border: 0;
+}
+
+.footerGrid {
+  grid-template-columns: 1.4fr 1fr 1fr 0.8fr;
+  gap: 2rem;
+  padding-bottom: 2rem;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.footerLogo,
+.footerCol h4 {
+  color: #fff;
+  font-size: 0.88rem;
+}
+
+.footerBrand p,
+.footerCol p,
+.footerCol a {
+  color: #ded0ca;
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.footerCol h4 {
+  margin-bottom: 0.7rem;
+}
+
+.footerCol a {
+  margin-bottom: 0.4rem;
+}
+
+.footerCol a:hover {
+  color: #f1a9b5;
+}
+
+.footerBottom {
+  padding: 1rem;
+  color: #c6b7b1;
+  font-size: 0.68rem;
+}
+
+.footerBottom p {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .navLinks {
+    gap: 0.2rem;
+  }
+
+  .navLinks button {
+    padding: 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .especialidadesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .servicosGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .pagina {
+    padding-top: 58px;
+  }
+
+  .navbar {
+    min-height: 58px;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .navLogo {
+    font-size: 0.92rem;
+  }
+
+  .navLinks button:not(.btnAgendar) {
+    display: none;
+  }
+
+  .navLinks .btnAgendar {
+    display: inline-flex;
+  }
+
+  .hero {
+    min-height: 560px;
+    padding: 5rem 1rem 3rem;
+  }
+
+  .heroOverlay {
+    background: rgba(255, 247, 245, 0.72);
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 10vw, 2.8rem);
+  }
+
+  .hero p {
+    font-size: 0.88rem;
+  }
+
+  .heroStats {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+
+  .statLabel {
+    max-width: 92px;
+  }
+
+  .sobre,
+  .servicos,
+  .equipe {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 1.8rem;
+  }
+
+  .especialidadesGrid,
+  .servicosGrid,
+  .equipeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .servicoCard {
+    min-height: 120px;
+  }
+
+  .membroFoto {
+    aspect-ratio: 4 / 3.2;
+  }
+
+  .membroAvatar {
+    width: 100%;
+    height: 100%;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+}
+
+.pagina {
+  color: #fff;
+  background: #060d1f;
+}
+
+.navbar {
+  background: rgba(6, 13, 31, 0.94);
+  border-bottom-color: rgba(0, 170, 255, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.navLogo {
+  color: #fff;
+}
+
+.logoCirculo {
+  background: linear-gradient(135deg, #e63027, #00aaff);
+  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+}
+
+.navLinks button {
+  color: #a0b4cc;
+}
+
+.navLinks button:hover {
+  color: #fff;
+}
+
+.btnCliente,
+.btnAdmin {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none;
+}
+
+.btnCliente:hover,
+.btnAdmin:hover {
+  border-color: #00aaff !important;
+  color: #00aaff !important;
+  background: rgba(0, 170, 255, 0.12) !important;
+}
+
+.btnAgendar,
+.btnPrimario {
+  color: #fff !important;
+  background: linear-gradient(135deg, #e63027, #c0392b);
+  box-shadow: 0 6px 20px rgba(230, 48, 39, 0.3);
+}
+
+.btnAgendar:hover,
+.btnPrimario:hover {
+  background: linear-gradient(135deg, #e63027, #c0392b);
+  box-shadow: 0 8px 24px rgba(230, 48, 39, 0.42);
+}
+
+.heroOverlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(4, 9, 22, 0.68) 0%,
+    rgba(4, 9, 22, 0.58) 52%,
+    #060d1f 100%
+  );
+}
+
+.heroBadge {
+  border-color: rgba(0, 170, 255, 0.35);
+  color: #00aaff;
+  background: rgba(0, 170, 255, 0.1);
+}
+
+.hero h1 {
+  color: #fff;
+}
+
+.hero h1 span,
+.sectionHeader h2 span {
+  background: linear-gradient(135deg, #00aaff 0%, #e63027 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p,
+.statLabel,
+.sectionHeader p,
+.especialidadeCard p,
+.servicoCard > p,
+.servicoMeta span,
+.membroDescricao {
+  color: #a0b4cc;
+}
+
+.statNum,
+.servicoMeta strong {
+  color: #00aaff;
+}
+
+.sobre,
+.equipe {
+  color: #fff;
+  background: linear-gradient(180deg, #060d1f 0%, #0a1940 55%, #060d1f 100%);
+}
+
+.servicos {
+  color: #fff;
+  background: #060d1f;
+}
+
+.sectionLabel {
+  border-color: rgba(0, 170, 255, 0.25);
+  color: #00aaff;
+  background: rgba(0, 170, 255, 0.1);
+}
+
+.sectionHeader h2,
+.especialidadeCard h3,
+.servicoCard h3,
+.membroInfo h3 {
+  color: #fff;
+}
+
+.especialidadeCard,
+.servicoCard,
+.membroCard {
+  border-color: rgba(0, 170, 255, 0.17);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(0, 170, 255, 0.035));
+  box-shadow: none;
+}
+
+.especialidadeCard:hover,
+.servicoCard:hover,
+.membroCard:hover {
+  border-color: rgba(0, 170, 255, 0.45);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
+}
+
+.especialidadeIcone {
+  color: #00aaff;
+  background: rgba(0, 170, 255, 0.12);
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.12);
+}
+
+.servTab,
+.servTabAtivo {
+  border-color: rgba(0, 170, 255, 0.22);
+  color: #a0b4cc;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.servTab:hover {
+  border-color: rgba(0, 170, 255, 0.5);
+  color: #fff;
+  background: rgba(0, 170, 255, 0.1);
+}
+
+.servTabAtivo {
+  border-color: #e63027;
+  color: #fff;
+  background: linear-gradient(135deg, #e63027, #c0392b);
+  box-shadow: 0 6px 18px rgba(230, 48, 39, 0.25);
+}
+
+.servicoMeta {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.membroFoto {
+  background: linear-gradient(135deg, #0a1940, #1a3a6b);
+}
+
+.membroAvatar {
+  color: #fff;
+  background: linear-gradient(135deg, #e63027, #00aaff);
+}
+
+.membroBadge {
+  color: #00aaff;
+  background: rgba(13, 27, 62, 0.9);
+}
+
+.membroEspecialidade,
+.membroInstagram {
+  color: #00aaff;
+}
+
+.membroInfo .btnAgendarItem {
+  border: 1px solid rgba(230, 48, 39, 0.35);
+  color: #ff6b5b;
+  background: rgba(230, 48, 39, 0.1);
+}
+
+.membroInfo .btnAgendarItem:hover {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, #e63027, #c0392b);
+}
+
+.cta {
+  color: #fff;
+  background: linear-gradient(135deg, #0a1940, #060d1f);
+}
+
+.cta h2 {
+  color: #fff;
+}
+
+.cta p {
+  color: #a0b4cc;
+}
+
+.footer {
+  color: #fff;
+  background: #02050f;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.footerGrid {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.footerBrand p,
+.footerCol p,
+.footerCol a,
+.footerBottom {
+  color: #a0b4cc;
+}
+
+.footerCol a:hover {
+  color: #00aaff;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    width: 100%;
+    min-height: 560px;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .heroConteudo {
+    width: 100%;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.75rem, 8vw, 2.6rem);
+    overflow-wrap: anywhere;
+  }
 }
